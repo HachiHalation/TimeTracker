@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/UI" type="java-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="google-api-services-sheets-v4-rev528-1.23.0" level="project" />
+    <orderEntry type="library" name="google-api-client-1.23.0" level="project" />
+    <orderEntry type="library" name="google-http-client-jackson2-1.23.0" level="project" />
+    <orderEntry type="library" name="google-oauth-client-java6-1.23.0" level="project" />
+    <orderEntry type="library" name="google-oauth-client-jetty-1.23.0" level="project" />
+    <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-core:2.8.6" level="project" />
+    <orderEntry type="library" name="org.mortbay.jetty:jetty:6.1.26" level="project" />
+    <orderEntry type="library" name="com.google.apis:google-api-services-drive:v3-rev122-1.23.0" level="project" />
+  </component>
+</module>
