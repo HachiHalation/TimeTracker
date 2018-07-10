@@ -1,6 +1,7 @@
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 import com.google.api.services.sheets.v4.Sheets;
 
 import com.google.api.services.sheets.v4.model.Spreadsheet;
@@ -57,6 +58,7 @@ public class MainWindow {
     private void makeSheet() throws IOException{
         Instant currentTime = Instant.now();
 
+
         Spreadsheet spread = gs.makeNewSpread("TimeTracker#" + currentTime, sheetsHandler);
         gd.toFolder(current.getFolderID(), driveHandler);
 
@@ -64,7 +66,24 @@ public class MainWindow {
         current.setName(spread.getProperties().getTitle());
         info.setText("New spreadsheet made (ID:" + spread.getSpreadsheetId() + ")");
 
-        System.out.println("New ID:" + spread.getSpreadsheetId());
+        String prevName = current.getName();
+
+        Stage newStage = new Stage();
+        FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("NewSSheetWindow.fxml"));
+        load.setController(new NewSSheetWindow(current));
+        Parent root = load.load();
+
+        newStage.setTitle("Set Title");
+        newStage.setScene(new Scene(root, 435, 37));
+        newStage.setResizable(false);
+        newStage.showAndWait();
+
+        if(!prevName.equals(current.getName())){
+            File temp = new File();
+            temp.setName(current.getName());
+            driveHandler.files().update(current.getCurrentID(), temp).execute();
+            info.setText("Title changed to " + current.getName());
+        }
     }
 
     @FXML
@@ -78,8 +97,8 @@ public class MainWindow {
     @FXML
     private void makeChangeSheetWindow() throws IOException{
         Stage newStage = new Stage();
-        FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("UI/ChangeSheetWindow.fxml"));
-        load.setController(new ChangeSheetWindow(driveHandler, current));
+        FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("ChangeSSheetWindow.fxml"));
+        load.setController(new ChangeSSheetWindow(driveHandler, current));
         Parent root = load.load();
 
         newStage.setTitle("Change Spreadsheet");

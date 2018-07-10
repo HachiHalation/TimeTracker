@@ -53,17 +53,17 @@
                </children>
             </GridPane>
             <TextField fx:id="input" GridPane.rowIndex="1" />
-            <Label alignment="CENTER" prefHeight="28.0" prefWidth="370.0" text="Time Tracker v0.2">
+            <Label alignment="CENTER" prefHeight="28.0" prefWidth="370.0" text="Time Tracker v0.3">
                <font>
                   <Font name="Segoe UI Semibold" size="24.0" />
                </font>
             </Label>
-            <Button fx:id="create" mnemonicParsing="false" onAction="#makeSheet" prefHeight="25.0" prefWidth="115.0" text="New Sheet" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Button fx:id="create" mnemonicParsing="false" onAction="#makeSheet" prefHeight="25.0" prefWidth="115.0" text="New S. Sheet" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Button fx:id="note" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Note" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Button fx:id="update" mnemonicParsing="false" onAction="#updateSheet" prefHeight="25.0" prefWidth="127.0" text="Update" GridPane.columnIndex="1" />
             <Button fx:id="access" mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="To Browser" GridPane.columnIndex="2" />
             <Button fx:id="options" mnemonicParsing="false" prefHeight="25.0" prefWidth="138.0" text="Options" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Button fx:id="change" mnemonicParsing="false" onAction="#makeChangeSheetWindow" prefHeight="25.0" prefWidth="115.0" text="Open Sheet" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Button fx:id="change" mnemonicParsing="false" onAction="#makeChangeSheetWindow" prefHeight="25.0" prefWidth="115.0" text="Open S. Sheet" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class ChangeSheetWindow implements Initializable{
+public class ChangeSSheetWindow implements Initializable{
 
     private Drive driveHandler;
     private CurrentSpreadsheet currentSpread;
@@ -31,7 +31,7 @@ public class ChangeSheetWindow implements Initializable{
     @FXML
     private Label current;
 
-    public ChangeSheetWindow(Drive driveHandler, CurrentSpreadsheet current) throws IOException{
+    public ChangeSSheetWindow(Drive driveHandler, CurrentSpreadsheet current) throws IOException{
         this.driveHandler = driveHandler;
         this.currentSpread = current;
 
