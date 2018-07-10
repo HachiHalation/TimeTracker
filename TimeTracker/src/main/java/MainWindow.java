@@ -5,9 +5,13 @@ import com.google.api.services.sheets.v4.Sheets;
 
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -17,17 +21,25 @@ public class MainWindow {
     private Sheets sheetsHandler;
     private GoogleDrive gd;
     private Drive driveHandler;
-    private Spreadsheet spread;
-    private String folderId;
+    private CurrentSpreadsheet current;
 
     @FXML
-    Button update;
+    private Button update;
     @FXML
-    Button create;
+    private Button create;
     @FXML
-    Label info;
+    private Label info;
     @FXML
-    TextField input;
+    private TextField input;
+
+    public Sheets getSheetsHandler(){
+        return sheetsHandler;
+    }
+
+    public Drive getDriveHandler() {
+        return driveHandler;
+    }
+
 
     @FXML
     private void initialize() throws IOException{
@@ -37,16 +49,21 @@ public class MainWindow {
         sheetsHandler = gs.makeServiceHandler(transport);
         driveHandler = gd.makeServiceHandler(transport);
 
-        folderId = gd.findFolder(driveHandler);
+        String folderId = gd.findFolder(driveHandler);
+        current = new CurrentSpreadsheet(null, folderId, null);
     }
 
     @FXML
     private void makeSheet() throws IOException{
         Instant currentTime = Instant.now();
 
-        spread = gs.makeNewSpread("TimeTracker#" + currentTime, sheetsHandler);
-        gd.toFolder(folderId, driveHandler);
+        Spreadsheet spread = gs.makeNewSpread("TimeTracker#" + currentTime, sheetsHandler);
+        gd.toFolder(current.getFolderID(), driveHandler);
+
+        current.setCurrentID(spread.getSpreadsheetId());
+        current.setName(spread.getProperties().getTitle());
         info.setText("New spreadsheet made (ID:" + spread.getSpreadsheetId() + ")");
+
         System.out.println("New ID:" + spread.getSpreadsheetId());
     }
 
@@ -54,8 +71,22 @@ public class MainWindow {
     private void updateSheet() throws IOException{
         Instant currentTime = Instant.now();
 
-        gs.updateSheet(input.getText(), currentTime.toString(), spread.getSpreadsheetId(), sheetsHandler);
+        gs.updateSheet(input.getText(), currentTime.toString(), current.getCurrentID(), sheetsHandler);
         info.setText("Spreadsheet updated @" + currentTime.toString());
+    }
+
+    @FXML
+    private void makeChangeSheetWindow() throws IOException{
+        Stage newStage = new Stage();
+        FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("UI/ChangeSheetWindow.fxml"));
+        load.setController(new ChangeSheetWindow(driveHandler, current));
+        Parent root = load.load();
+
+        newStage.setTitle("Change Spreadsheet");
+        newStage.setScene(new Scene(root, 466, 92));
+        newStage.setResizable(false);
+        newStage.show();
+
     }
 
 }

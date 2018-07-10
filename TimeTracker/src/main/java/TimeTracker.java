@@ -11,7 +11,7 @@ public class TimeTracker extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent main = FXMLLoader.load(TimeTracker.class.getResource("UI/MainWindow.fxml"));
-        primaryStage.setTitle("Time Tracker v0.1");
+        primaryStage.setTitle("Time Tracker");
         primaryStage.setScene(new Scene(main, 700, 110));
         primaryStage.setResizable(false);
         primaryStage.show();

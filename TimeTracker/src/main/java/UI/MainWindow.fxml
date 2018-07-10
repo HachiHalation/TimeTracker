@@ -46,24 +46,24 @@
                <children>
                   <Label fx:id="info" prefHeight="15.0" prefWidth="367.0" text="Information">
                      <font>
-                        <Font name="Lucida Sans Regular" size="12.0" />
+                        <Font name="Segoe UI Light" size="12.0" />
                      </font>
                   </Label>
                   <Button fx:id="log" mnemonicParsing="false" prefHeight="25.0" prefWidth="71.0" text="Expand" GridPane.columnIndex="1" />
                </children>
             </GridPane>
             <TextField fx:id="input" GridPane.rowIndex="1" />
-            <Label alignment="CENTER" prefHeight="28.0" prefWidth="370.0" text="Time Tracker v0.1">
+            <Label alignment="CENTER" prefHeight="28.0" prefWidth="370.0" text="Time Tracker v0.2">
                <font>
-                  <Font name="Lucida Sans Regular" size="24.0" />
+                  <Font name="Segoe UI Semibold" size="24.0" />
                </font>
             </Label>
             <Button fx:id="create" mnemonicParsing="false" onAction="#makeSheet" prefHeight="25.0" prefWidth="115.0" text="New Sheet" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Button fx:id="note" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Note" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Button fx:id="update" mnemonicParsing="false" onAction="#updateSheet" prefHeight="25.0" prefWidth="127.0" text="Update" GridPane.columnIndex="1" />
-            <Button fx:id="access" mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="Open Sheet" GridPane.columnIndex="2" />
+            <Button fx:id="access" mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="To Browser" GridPane.columnIndex="2" />
             <Button fx:id="options" mnemonicParsing="false" prefHeight="25.0" prefWidth="138.0" text="Options" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Button fx:id="change" mnemonicParsing="false" prefHeight="25.0" prefWidth="115.0" text="Change Sht." GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Button fx:id="change" mnemonicParsing="false" onAction="#makeChangeSheetWindow" prefHeight="25.0" prefWidth="115.0" text="Open Sheet" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
@@ -73,8 +73,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem fx:id="newsheetmenu" mnemonicParsing="false" text="New" />
-                  <MenuItem fx:id="changesheetmenu" mnemonicParsing="false" text="Open" />
+              <MenuItem fx:id="newsheetmenu" mnemonicParsing="false" onAction="#makeSheet" text="New" />
+                  <MenuItem fx:id="changesheetmenu" mnemonicParsing="false" onAction="#makeChangeSheetWindow" text="Open" />
                   <MenuItem fx:id="closeapp" mnemonicParsing="false" text="Exit" />
             </items>
           </Menu>
