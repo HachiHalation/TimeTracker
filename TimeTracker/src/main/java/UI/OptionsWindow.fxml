@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.32211538461538464" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="418.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="OptionsWindow">
+   <items>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+         <children>
+            <Label text="General">
+               <font>
+                  <Font name="Segoe UI Light" size="18.0" />
+               </font>
+            </Label>
+            <Label onMouseClicked="#changeAppearanceView" text="Appearance">
+               <font>
+                  <Font name="Segoe UI Light" size="18.0" />
+               </font>
+            </Label>
+            <Label text="Spreadsheet">
+               <font>
+                  <Font name="Segoe UI Light" size="18.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="10.0" top="10.0" />
+         </padding>
+      </VBox>
+      <AnchorPane fx:id="dynamicPane" prefHeight="400.0" prefWidth="450.0" />
+   </items>
+</SplitPane>

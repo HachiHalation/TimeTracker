@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public class MainWindow {
     private GoogleSheets gs;
@@ -56,10 +56,11 @@ public class MainWindow {
 
     @FXML
     private void makeSheet() throws IOException{
-        Instant currentTime = Instant.now();
+        LocalDateTime time = LocalDateTime.now();
+        String[] split = time.toString().split("T");
 
 
-        Spreadsheet spread = gs.makeNewSpread("TimeTracker#" + currentTime, sheetsHandler);
+        Spreadsheet spread = gs.makeNewSpread("TimeTracker#" + split[0], sheetsHandler);
         gd.toFolder(current.getFolderID(), driveHandler);
 
         current.setCurrentID(spread.getSpreadsheetId());
@@ -88,7 +89,7 @@ public class MainWindow {
 
     @FXML
     private void updateSheet() throws IOException{
-        Instant currentTime = Instant.now();
+       LocalDateTime currentTime = LocalDateTime.now();
 
         gs.updateSheet(input.getText(), currentTime.toString(), current.getCurrentID(), sheetsHandler);
         info.setText("Spreadsheet updated @" + currentTime.toString());
@@ -103,6 +104,17 @@ public class MainWindow {
 
         newStage.setTitle("Change Spreadsheet");
         newStage.setScene(new Scene(root, 466, 92));
+        newStage.setResizable(false);
+        newStage.show();
+
+    }
+
+    @FXML
+    private void makeOptionsWindow() throws IOException{
+        Stage newStage = new Stage();
+        newStage.setScene(new Scene(FXMLLoader.load(MainWindow.class.getResource("UI/OptionsWindow.fxml")), 450, 400));
+
+        newStage.setTitle("Options");
         newStage.setResizable(false);
         newStage.show();
 
