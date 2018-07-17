@@ -31,8 +31,8 @@ public class ChangeSSheetWindow implements Initializable{
     @FXML
     private Label current;
 
-    public ChangeSSheetWindow(Drive driveHandler, CurrentSpreadsheet current) throws IOException{
-        this.driveHandler = driveHandler;
+    public ChangeSSheetWindow(CurrentSpreadsheet current) throws IOException{
+        this.driveHandler = current.getGoogleDrive().getHandler();
         this.currentSpread = current;
 
         nameToID = new HashMap<>();

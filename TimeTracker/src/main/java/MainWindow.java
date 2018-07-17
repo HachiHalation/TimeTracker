@@ -14,15 +14,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 
 public class MainWindow {
-    private GoogleSheets gs;
-    private Sheets sheetsHandler;
-    private GoogleDrive gd;
-    private Drive driveHandler;
+
     private CurrentSpreadsheet current;
+    private DateManipulation now;
 
     @FXML
     private Button update;
@@ -33,45 +34,23 @@ public class MainWindow {
     @FXML
     private TextField input;
 
-    public Sheets getSheetsHandler(){
-        return sheetsHandler;
-    }
-
-    public Drive getDriveHandler() {
-        return driveHandler;
-    }
-
-
     @FXML
     private void initialize() throws IOException{
-        HttpTransport transport = new NetHttpTransport();
-        gs = new GoogleSheets();
-        gd = new GoogleDrive();
-        sheetsHandler = gs.makeServiceHandler(transport);
-        driveHandler = gd.makeServiceHandler(transport);
-
-        String folderId = gd.findFolder(driveHandler);
-        current = new CurrentSpreadsheet(null, folderId, null);
+        current = new CurrentSpreadsheet();
+        now = new DateManipulation(LocalDateTime.now());
     }
 
     @FXML
     private void makeSheet() throws IOException{
-        LocalDateTime time = LocalDateTime.now();
-        String[] split = time.toString().split("T");
+        now.setNow(LocalDateTime.now());
+        goToSetTitle("TimeTracker#" + now.getDate());
 
+    }
 
-        Spreadsheet spread = gs.makeNewSpread("TimeTracker#" + split[0], sheetsHandler);
-        gd.toFolder(current.getFolderID(), driveHandler);
-
-        current.setCurrentID(spread.getSpreadsheetId());
-        current.setName(spread.getProperties().getTitle());
-        info.setText("New spreadsheet made (ID:" + spread.getSpreadsheetId() + ")");
-
-        String prevName = current.getName();
-
+    private void goToSetTitle(String title) throws IOException{
         Stage newStage = new Stage();
         FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("NewSSheetWindow.fxml"));
-        load.setController(new NewSSheetWindow(current));
+        load.setController(new NewSSheetWindow(current, new StringBuilder(title)));
         Parent root = load.load();
 
         newStage.setTitle("Set Title");
@@ -79,27 +58,23 @@ public class MainWindow {
         newStage.setResizable(false);
         newStage.showAndWait();
 
-        if(!prevName.equals(current.getName())){
-            File temp = new File();
-            temp.setName(current.getName());
-            driveHandler.files().update(current.getCurrentID(), temp).execute();
-            info.setText("Title changed to " + current.getName());
-        }
     }
+
+
 
     @FXML
     private void updateSheet() throws IOException{
-       LocalDateTime currentTime = LocalDateTime.now();
+        now.setNow(LocalDateTime.now());
 
-        gs.updateSheet(input.getText(), currentTime.toString(), current.getCurrentID(), sheetsHandler);
-        info.setText("Spreadsheet updated @" + currentTime.toString());
+        current.update(now.getDayAndTime(), input.getText());
+        info.setText("Spreadsheet updated @" + now.getFullDate());
     }
 
     @FXML
     private void makeChangeSheetWindow() throws IOException{
         Stage newStage = new Stage();
         FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("ChangeSSheetWindow.fxml"));
-        load.setController(new ChangeSSheetWindow(driveHandler, current));
+        load.setController(new ChangeSSheetWindow(current));
         Parent root = load.load();
 
         newStage.setTitle("Change Spreadsheet");
@@ -119,5 +94,16 @@ public class MainWindow {
         newStage.show();
 
     }
+
+    @FXML
+    private void openBrowser() throws IOException, URISyntaxException {
+        if(!current.getCurrentID().equals("NOT SELECTED") && Desktop.isDesktopSupported()){
+            Desktop.getDesktop().browse(new URI("https://docs.google.com/spreadsheets/d/" + current.getCurrentID() + "/edit#gid=0"));
+        } else {
+            info.setText("Select a spreadsheet first.");
+        }
+    }
+
+
 
 }

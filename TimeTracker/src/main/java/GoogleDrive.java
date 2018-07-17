@@ -11,6 +11,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,16 +27,20 @@ public class GoogleDrive {
     private JsonFactory FACTORY;
     private List<String> scopes;
 
-    public GoogleDrive(){
+    private Drive handler;
+
+    public GoogleDrive(HttpTransport transport) throws IOException{
         APP_NAME = "Time Tracker";
         CREDENTIAL_FOLDER = "credentialsDrive";
         CLIENT_SCERET = "credentials_drive.json";
         FACTORY = JacksonFactory.getDefaultInstance();
         scopes = Collections.singletonList(DriveScopes.DRIVE);
+
+        handler = makeServiceHandler(transport);
     }
 
 
-    public Drive makeServiceHandler(HttpTransport transport) throws IOException {
+    private Drive makeServiceHandler(HttpTransport transport) throws IOException {
         InputStream in = GoogleSheets.class.getResourceAsStream(CLIENT_SCERET);
         GoogleClientSecrets secret = GoogleClientSecrets.load(FACTORY, new InputStreamReader(in));
 
@@ -88,5 +93,9 @@ public class GoogleDrive {
                     .execute();
 
         }
+    }
+
+    public Drive getHandler() {
+        return handler;
     }
 }

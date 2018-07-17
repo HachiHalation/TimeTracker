@@ -61,7 +61,7 @@
             <Button fx:id="create" mnemonicParsing="false" onAction="#makeSheet" prefHeight="25.0" prefWidth="115.0" text="New S. Sheet" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Button fx:id="note" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Note" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Button fx:id="update" mnemonicParsing="false" onAction="#updateSheet" prefHeight="25.0" prefWidth="127.0" text="Update" GridPane.columnIndex="1" />
-            <Button fx:id="access" mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="To Browser" GridPane.columnIndex="2" />
+            <Button fx:id="access" mnemonicParsing="false" onAction="#openBrowser" prefHeight="25.0" prefWidth="140.0" text="To Browser" GridPane.columnIndex="2" />
             <Button fx:id="options" mnemonicParsing="false" onAction="#makeOptionsWindow" prefHeight="25.0" prefWidth="138.0" text="Options" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Button fx:id="change" mnemonicParsing="false" onAction="#makeChangeSheetWindow" prefHeight="25.0" prefWidth="115.0" text="Open S. Sheet" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>

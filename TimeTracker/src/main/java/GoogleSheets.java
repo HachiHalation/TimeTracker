@@ -28,16 +28,20 @@ public class GoogleSheets {
     private JsonFactory FACTORY;
     private List<String> scopes;
 
-    public GoogleSheets(){
+    private Sheets handler;
+
+    public GoogleSheets(HttpTransport transport) throws IOException{
         APP_NAME = "Time Tracker";
         CREDENTIAL_FOLDER = "credentialsSheets";
         CLIENT_SCERET = "credentials_drive.json";
         FACTORY = JacksonFactory.getDefaultInstance();
         scopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+
+        handler = makeServiceHandler(transport);
     }
 
 
-    public Sheets makeServiceHandler(HttpTransport transport) throws IOException{
+    private Sheets makeServiceHandler(HttpTransport transport) throws IOException{
         InputStream in = GoogleSheets.class.getResourceAsStream(CLIENT_SCERET);
         GoogleClientSecrets secret = GoogleClientSecrets.load(FACTORY, new InputStreamReader(in));
 
@@ -50,6 +54,10 @@ public class GoogleSheets {
         Sheets.Builder serviceBuild = new Sheets.Builder(transport, FACTORY, credential);
         serviceBuild.setApplicationName(APP_NAME);
         return serviceBuild.build();
+    }
+
+    public Sheets getHandler(){
+        return handler;
     }
 
 
@@ -82,7 +90,7 @@ public class GoogleSheets {
         sheets.add(newsheet);
     }
 
-    public void updateSheet(String message, String timestamp, String spreadsheet_id, Sheets service_handler) throws IOException{
+    public void updateSheet(String timestamp, String message, String spreadsheet_id, Sheets service_handler) throws IOException{
 
         ValueRange newVals = new ValueRange();
         newVals.setRange("A1");
@@ -102,4 +110,6 @@ public class GoogleSheets {
         updateRequest.execute();
 
     }
+
+
 }
