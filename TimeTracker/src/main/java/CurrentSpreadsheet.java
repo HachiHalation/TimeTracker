@@ -37,7 +37,7 @@ public class CurrentSpreadsheet {
         currentID = spread.getSpreadsheetId();
         name = spread.getProperties().getTitle();
 
-        gd.toFolder(folderID, gd.getHandler());
+        gd.toFolder(currentID, folderID, gd.getHandler());
     }
 
     public void update(String time, String message) throws IOException{

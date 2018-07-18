@@ -53,7 +53,7 @@
                </children>
             </GridPane>
             <TextField fx:id="input" GridPane.rowIndex="1" />
-            <Label alignment="CENTER" prefHeight="28.0" prefWidth="370.0" text="Time Tracker v0.3">
+            <Label fx:id = "title" alignment="CENTER" prefHeight="28.0" prefWidth="370.0" text="Time Tracker v0.3">
                <font>
                   <Font name="Segoe UI Semibold" size="24.0" />
                </font>

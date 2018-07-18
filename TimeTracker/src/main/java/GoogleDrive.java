@@ -68,13 +68,10 @@ public class GoogleDrive {
         return list.get(0).getId();
     }
 
-    //sends all files with prefix "TimeTracker" to target folder
-    public void toFolder(String parent_id, Drive service_handler) throws IOException{
-        List<File> list = service_handler.files().list().setQ("(name contains 'TimeTracker') and (mimeType = 'application/vnd.google-apps.spreadsheet') and (not '" + parent_id + "' in parents)").execute().getFiles();
+    //sends specific file to parent folder
+    public void toFolder(String source_id, String parent_id, Drive service_handler) throws IOException{
 
-        for(int i = 0; i < list.size(); i++){
-            File source = list.get(i);
-            String sourceId = source.getId();
+            File source = handler.files().get(source_id).execute();
 
             List<String> sourceParents = source.getParents();
             StringBuilder formerParents = new StringBuilder();
@@ -87,12 +84,11 @@ public class GoogleDrive {
 
             File temp = new File();
 
-            service_handler.files().update(sourceId, temp)
+            service_handler.files().update(source_id, temp)
                     .setAddParents(parent_id)
                     .setRemoveParents(formerParents.toString())
                     .execute();
 
-        }
     }
 
     public Drive getHandler() {

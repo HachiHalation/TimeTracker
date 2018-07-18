@@ -25,6 +25,8 @@ public class MainWindow {
     private CurrentSpreadsheet current;
     private DateManipulation now;
 
+    private String VERSION = "0.5";
+
     @FXML
     private Button update;
     @FXML
@@ -33,9 +35,13 @@ public class MainWindow {
     private Label info;
     @FXML
     private TextField input;
+    @FXML
+    private Label title;
 
     @FXML
     private void initialize() throws IOException{
+        title.setText("TimeTracker V" + VERSION);
+
         current = new CurrentSpreadsheet();
         now = new DateManipulation(LocalDateTime.now());
     }
