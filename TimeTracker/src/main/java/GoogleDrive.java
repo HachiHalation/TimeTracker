@@ -31,7 +31,7 @@ public class GoogleDrive {
 
     public GoogleDrive(HttpTransport transport) throws IOException{
         APP_NAME = "Time Tracker";
-        CREDENTIAL_FOLDER = "credentialsDrive";
+        CREDENTIAL_FOLDER = "Data/credentialsDrive";
         CLIENT_SCERET = "credentials_drive.json";
         FACTORY = JacksonFactory.getDefaultInstance();
         scopes = Collections.singletonList(DriveScopes.DRIVE);

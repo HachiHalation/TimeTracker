@@ -32,7 +32,7 @@ public class GoogleSheets {
 
     public GoogleSheets(HttpTransport transport) throws IOException{
         APP_NAME = "Time Tracker";
-        CREDENTIAL_FOLDER = "credentialsSheets";
+        CREDENTIAL_FOLDER = "Data/credentialsSheets";
         CLIENT_SCERET = "credentials_drive.json";
         FACTORY = JacksonFactory.getDefaultInstance();
         scopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
@@ -61,7 +61,7 @@ public class GoogleSheets {
     }
 
 
-    public Spreadsheet makeNewSpread(String title, Sheets service_handler) throws IOException{
+    public Spreadsheet makeNewSpread(String title, Sheets service_handler, Color updateColor, Color noteColor) throws IOException{
         Spreadsheet base = new Spreadsheet();
 
         SpreadsheetProperties properties = new SpreadsheetProperties();
@@ -78,7 +78,55 @@ public class GoogleSheets {
 
         Sheets.Spreadsheets.Create newSheetRequest = service_handler.spreadsheets().create(newSpread);
 
-        return newSheetRequest.execute();
+        Spreadsheet current = newSheetRequest.execute();
+        String id = current.getSpreadsheetId();
+
+
+        BatchUpdateSpreadsheetRequest update = new BatchUpdateSpreadsheetRequest();
+        Request requestNote = new Request();
+
+        ConditionalFormatRule noterule = new ConditionalFormatRule();
+        noterule.setRanges(Collections.singletonList(new GridRange()
+                .setSheetId(0)
+                .setStartColumnIndex(0)
+                .setEndColumnIndex(2)));
+
+        noterule.setBooleanRule(new BooleanRule()
+                .setCondition(new BooleanCondition()
+                        .setType("CUSTOM_FORMULA")
+                        .setValues(Collections.singletonList(new ConditionValue()
+                            .setUserEnteredValue("=REGEXMATCH($A1, \"NOTE\")"))))
+                .setFormat(new CellFormat()
+                        .setTextFormat(new TextFormat()
+                        .setForegroundColor(noteColor))));
+
+        requestNote.setAddConditionalFormatRule(new AddConditionalFormatRuleRequest().setRule(noterule).setIndex(0));
+
+        Request requestUpdate = new Request();
+        ConditionalFormatRule updaterule = new ConditionalFormatRule();
+        updaterule.setRanges(Collections.singletonList(new GridRange()
+                .setSheetId(0)
+                .setStartColumnIndex(0)
+                .setEndColumnIndex(2)));
+
+        updaterule.setBooleanRule(new BooleanRule()
+                .setCondition(new BooleanCondition()
+                        .setType("CUSTOM_FORMULA")
+                        .setValues(Collections.singletonList(new ConditionValue()
+                                .setUserEnteredValue("=NOT(REGEXMATCH($A1, \"NOTE\"))"))))
+                .setFormat(new CellFormat()
+                        .setTextFormat(new TextFormat()
+                                .setForegroundColor(updateColor))));
+
+        requestUpdate.setAddConditionalFormatRule(new AddConditionalFormatRuleRequest().setRule(updaterule).setIndex(1));
+
+        ArrayList<Request> requests = new ArrayList<>();
+        requests.add(requestNote);
+        requests.add(requestUpdate);
+        update.setRequests(requests);
+
+        service_handler.spreadsheets().batchUpdate(id, update).execute();
+        return current;
     }
 
     public void addNewSheet(Spreadsheet spread){
@@ -90,12 +138,16 @@ public class GoogleSheets {
         sheets.add(newsheet);
     }
 
-    public void updateSheet(String timestamp, String message, String spreadsheet_id, Sheets service_handler) throws IOException{
+    public void updateSheet(String timestamp, String message, String spreadsheet_id, Sheets service_handler, Boolean note) throws IOException{
 
         ValueRange newVals = new ValueRange();
         newVals.setRange("A1");
         List<Object> input = new ArrayList<>();
-        input.add(timestamp);
+        if(note){
+            input.add("NOTE");
+        }else {
+            input.add(timestamp);
+        }
         input.add(message);
 
         List<List<Object>> vals = new ArrayList<>();
