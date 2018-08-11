@@ -3,9 +3,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,13 +26,21 @@ public class OptionsWindow implements Initializable{
     private Label appearanceTab;
     @FXML
     private Label spreadsheetTab;
+    @FXML
+    private Button ok;
+    @FXML
+    private Button apply;
+    @FXML
+    private Button cancel;
 
     private Properties  options;
     private Path path;
 
+    private MainWindow controller;
 
-    public OptionsWindow(Path optionspath){
+    public OptionsWindow(Path optionspath, MainWindow controller){
         path = optionspath;
+        this.controller = controller;
     }
 
 
@@ -66,6 +76,24 @@ public class OptionsWindow implements Initializable{
                 e.printStackTrace();
             }
         });
+
+        cancel.setOnAction(event -> closeWindow());
+
+        apply.setOnAction(event -> {
+            try{
+                applyChanges();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        ok.setOnAction(event -> {
+            try {
+                saveAndClose();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        });
     }
     @FXML
     private void changeAppearanceView() throws IOException{
@@ -80,6 +108,24 @@ public class OptionsWindow implements Initializable{
     @FXML
     private void changeGeneralView() throws IOException{
         loadResource("UI/GeneralOptions", new GeneralOptions(options));
+    }
+
+    @FXML
+    private void closeWindow(){
+        Stage temp = (Stage) cancel.getScene().getWindow();
+        temp.close();
+    }
+
+    @FXML
+    private void applyChanges() throws IOException{
+        options.store(Files.newOutputStream(path), "Timetracker Options");
+        controller.loadOptions();
+    }
+
+    @FXML
+    private void saveAndClose() throws IOException{
+        applyChanges();
+        closeWindow();
     }
 
     private void changeView(Node n) throws IOException{

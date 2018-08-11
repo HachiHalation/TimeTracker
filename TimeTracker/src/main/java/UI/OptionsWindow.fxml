@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.9170854271356784" orientation="VERTICAL" prefHeight="500.0" prefWidth="418" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.8092369477911646" orientation="VERTICAL" prefHeight="500.0" prefWidth="418" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1">
     <items>
-    <SplitPane dividerPositions="0.32211538461538464" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0">
+    <SplitPane dividerPositions="0.32211538461538464" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="400.0">
        <items>
           <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
              <children>
@@ -42,17 +42,22 @@
     </SplitPane>
       <GridPane>
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="363.0" minWidth="10.0" prefWidth="323.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.0" minWidth="10.0" prefWidth="93.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="363.0" minWidth="10.0" prefWidth="54.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="363.0" minWidth="10.0" prefWidth="282.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.0" minWidth="10.0" prefWidth="61.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Button" GridPane.columnIndex="1" />
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="61.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="apply" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Apply" GridPane.columnIndex="2" />
+            <Button fx:id="ok" mnemonicParsing="false" prefHeight="25.0" prefWidth="61.0" text="OK" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Button fx:id="cancel" mnemonicParsing="false" text="Cancel" GridPane.rowIndex="1" />
          </children>
+         <padding>
+            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+         </padding>
       </GridPane>
     </items>
 </SplitPane>

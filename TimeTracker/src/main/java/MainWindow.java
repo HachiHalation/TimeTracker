@@ -7,6 +7,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 
 import java.awt.Desktop;
@@ -64,7 +67,7 @@ public class MainWindow {
         current.setNoteColor(noteColor);
 
         input.setOnKeyReleased(event -> {
-            if(event.getCode() == KeyCode.ENTER){
+            if(event.getCode() == KeyCode.ENTER && !event.isShiftDown()){
                 try {
                     updateSheet();
                 } catch (IOException e) {
@@ -74,21 +77,19 @@ public class MainWindow {
         });
 
         input.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.SHIFT){
-                input.setOnKeyReleased(event1 -> {
-                    if(event1.getCode() == KeyCode.ENTER){
-                        try{
-                            noteSheet();
-                        } catch ( IOException e){
-                            e.printStackTrace();
-                        }
-                    }
-                });
+            if(event.getCode() == KeyCode.ENTER && event.isShiftDown()){
+                try{
+                    noteSheet();
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
             }
         });
+
+
     }
 
-    private void loadOptions() throws IOException{
+    public void loadOptions() throws IOException{
         Properties options = new Properties();
 
         if(!Files.exists(OPTION_PATH)){
@@ -99,7 +100,7 @@ public class MainWindow {
         Set<String> keys = options.stringPropertyNames();
 
         if(keys.size() != OPTION_LENGTH){
-            Files.deleteIfExists(OPTION_PATH);
+            System.out.println(keys.size());
             makeOptions(options);
         }
 
@@ -107,8 +108,13 @@ public class MainWindow {
         loadTextColors(options);
     }
 
-    private void loadTimestampType(Properties options){
+    private void loadTimestampType(Properties options) throws IOException{
         String temp = options.getProperty("updateTimestampType");
+        try{
+            Integer.parseInt(temp);
+        } catch (NumberFormatException e) {
+            makeOptions(options);
+        }
         updateType = Options.intToTimestamp(Integer.parseInt(temp));
 
     }
@@ -137,6 +143,7 @@ public class MainWindow {
     }
 
     private void makeOptions(Properties options) throws IOException{
+        Files.deleteIfExists(OPTION_PATH);
         Files.createFile(OPTION_PATH);
         options.setProperty("updateTimestampType", "0");
         options.setProperty("updateColor", "0x000000");
@@ -190,6 +197,10 @@ public class MainWindow {
     @FXML
     private void makeChangeSheetWindow() throws IOException{
         Stage newStage = new Stage();
+        newStage.initOwner(title.getScene().getWindow());
+        newStage.initModality(Modality.WINDOW_MODAL);
+
+
         FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("UI/ChangeSSheetWindow.fxml"));
         load.setController(new ChangeSSheetWindow(current));
         Parent root = load.load();
@@ -197,6 +208,8 @@ public class MainWindow {
         newStage.setTitle("Change Spreadsheet");
         newStage.setScene(new Scene(root, 466, 92));
         newStage.setResizable(false);
+
+
         newStage.show();
 
     }
@@ -204,13 +217,15 @@ public class MainWindow {
     @FXML
     private void makeOptionsWindow() throws IOException{
         Stage newStage = new Stage();
+        newStage.initOwner(title.getScene().getWindow());
+        newStage.initModality(Modality.WINDOW_MODAL);
         FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("UI/OptionsWindow.fxml"));
-        load.setController(new OptionsWindow(OPTION_PATH));
+        load.setController(new OptionsWindow(OPTION_PATH, this));
         Parent root = load.load();
 
 
         newStage.setTitle("Options");
-        newStage.setScene(new Scene(root, 450, 400));
+        newStage.setScene(new Scene(root, 420, 500));
         newStage.setResizable(false);
         newStage.show();
 

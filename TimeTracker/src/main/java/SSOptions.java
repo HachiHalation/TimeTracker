@@ -50,7 +50,17 @@ public class SSOptions extends OptionsSubmenu implements Initializable{
         String currentTimestamp = Options.timestampToString(Options.intToTimestamp(Integer.parseInt(options.getProperty("updateTimestampType"))));
         timestampMenu.setValue(currentTimestamp);
 
+        updateColorPicker.setOnAction(event -> changeOption());
+        noteColorPicker.setOnAction(event -> changeOption());
+        timestampMenu.setOnAction(event -> changeOption());
 
+    }
+
+    @FXML
+    private void changeOption(){
+        options.setProperty("updateColor", updateColorPicker.getValue().toString());
+        options.setProperty("noteColor", noteColorPicker.getValue().toString());
+        options.setProperty("updateTimestampType", "" + Options.timestampToInt(Options.stringToTimestamp(timestampMenu.getValue().toString())));
 
     }
 }
