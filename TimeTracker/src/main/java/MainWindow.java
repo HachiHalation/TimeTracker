@@ -7,16 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Modality;
-import javafx.stage.Popup;
-import javafx.stage.PopupWindow;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 import java.awt.Desktop;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileAlreadyExistsException;
@@ -33,14 +27,6 @@ public class MainWindow {
     private CurrentSpreadsheet current;
     private DateManipulation now;
 
-    private final Path MAIN_FOLDER = Paths.get("Data");
-    private final Path OPTION_PATH = Paths.get("Data/options.txt");
-    private final String VERSION = "0.7";
-    private final int OPTION_LENGTH = 3;
-
-    private Color updateColor = new Color();
-    private Color noteColor = new Color();
-
     private Options.UpdateTimestampType updateType;
 
     @FXML
@@ -56,16 +42,15 @@ public class MainWindow {
 
     @FXML
     private void initialize() throws IOException{
-        loadOptions();
+        title.setText("TimeTracker V" + Options.getVERSION());
 
-        title.setText("TimeTracker V" + VERSION);
+        loadOptions();
+        loadHotkeys();
 
         now = new DateManipulation(LocalDateTime.now());
+    }
 
-        current = new CurrentSpreadsheet();
-        current.setUpdateColor(updateColor);
-        current.setNoteColor(noteColor);
-
+    private void loadHotkeys(){
         input.setOnKeyReleased(event -> {
             if(event.getCode() == KeyCode.ENTER && !event.isShiftDown()){
                 try {
@@ -85,27 +70,32 @@ public class MainWindow {
                 }
             }
         });
-
-
     }
 
     public void loadOptions() throws IOException{
         Properties options = new Properties();
 
-        if(!Files.exists(OPTION_PATH)){
+        if(!Files.exists(Options.getOptionPath())){
+            print("Config file not found. Creating new config file.");
             makeOptions(options);
         }
 
-        options.load(Files.newInputStream(OPTION_PATH));
+        options.load(Files.newInputStream(Options.getOptionPath()));
         Set<String> keys = options.stringPropertyNames();
 
-        if(keys.size() != OPTION_LENGTH){
+        if(keys.size() != Options.getOptionLength()){
+            print("Outdated config file detected. Resetting config file.");
             System.out.println(keys.size());
             makeOptions(options);
         }
 
+        current = new CurrentSpreadsheet();
+
         loadTimestampType(options);
-        loadTextColors(options);
+        print("Loaded timestamp type.");
+        loadTextColors(options, current);
+        print("Loaded text colors.");
+        if(loadInitialSpreadsheet(options, current)) print("Loaded spreadsheet \"" + current.getName() +"\".");
     }
 
     private void loadTimestampType(Properties options) throws IOException{
@@ -113,20 +103,20 @@ public class MainWindow {
         try{
             Integer.parseInt(temp);
         } catch (NumberFormatException e) {
+            print("Illegal config detected. Resetting to default config.");
             makeOptions(options);
         }
         updateType = Options.intToTimestamp(Integer.parseInt(temp));
-
     }
 
 
-    private void loadTextColors(Properties options){
+    private void loadTextColors(Properties options, CurrentSpreadsheet current){
         String temp = options.getProperty("updateColor");
         javafx.scene.paint.Color tempupdate = javafx.scene.paint.Color.web(temp);
 
-        System.out.println(tempupdate.toString());
-        double blue = 1.0;
-        float b = (float) blue;
+        Color updateColor = new Color();
+        Color noteColor = new Color();
+
         updateColor.setBlue((float) tempupdate.getBlue());
         updateColor.setRed((float) tempupdate.getRed());
         updateColor.setGreen((float) tempupdate.getGreen());
@@ -135,22 +125,38 @@ public class MainWindow {
         temp = options.getProperty("noteColor");
         javafx.scene.paint.Color tempnote = javafx.scene.paint.Color.web(temp);
 
-        System.out.println(tempnote.toString());
         noteColor.setBlue((float) tempnote.getBlue());
         noteColor.setGreen((float) tempnote.getGreen());
         noteColor.setRed((float) tempnote.getRed());
         noteColor.setAlpha((float) 1);
+
+        current.setUpdateColor(updateColor);
+        current.setNoteColor(noteColor);
     }
 
+    private boolean loadInitialSpreadsheet(Properties options, CurrentSpreadsheet current) throws IOException{
+        String id = options.getProperty("spreadsheetID");
+        if(!id.equals("null")){
+            current.setCurrentIDAndInfo(id);
+            return true;
+        }
+        return false;
+    }
+
+
+
     private void makeOptions(Properties options) throws IOException{
-        Files.deleteIfExists(OPTION_PATH);
-        Files.createFile(OPTION_PATH);
+        Files.deleteIfExists(Options.getOptionPath());
+        Files.createFile(Options.getOptionPath());
         options.setProperty("updateTimestampType", "0");
         options.setProperty("updateColor", "0x000000");
         options.setProperty("noteColor", "0xFF0000");
-        OutputStream file = Files.newOutputStream(OPTION_PATH);
+        options.setProperty("spreadsheetID", "null");
+        OutputStream file = Files.newOutputStream(Options.getOptionPath());
         options.store(file, "TimeTracker Options");
-}
+    }
+
+
 
 
 
@@ -181,7 +187,7 @@ public class MainWindow {
         now.setNow(LocalDateTime.now());
 
         current.update(now.getDayAndTime(), input.getText());
-        info.setText("Spreadsheet updated @" + now.getFullDate());
+        print("Spreadsheet updated @" + now.getFullDate());
         input.setText("");
     }
 
@@ -190,7 +196,7 @@ public class MainWindow {
         now.setNow(LocalDateTime.now());
 
         current.note(input.getText());
-        info.setText("Spreadsheet noted @" + now.getFullDate());
+        print("Spreadsheet noted @" + now.getFullDate());
         input.setText("");
     }
 
@@ -214,13 +220,14 @@ public class MainWindow {
 
     }
 
+
     @FXML
     private void makeOptionsWindow() throws IOException{
         Stage newStage = new Stage();
         newStage.initOwner(title.getScene().getWindow());
         newStage.initModality(Modality.WINDOW_MODAL);
         FXMLLoader load = new FXMLLoader(MainWindow.class.getResource("UI/OptionsWindow.fxml"));
-        load.setController(new OptionsWindow(OPTION_PATH, this));
+        load.setController(new OptionsWindow(this));
         Parent root = load.load();
 
 
@@ -235,9 +242,14 @@ public class MainWindow {
     private void openBrowser() throws IOException, URISyntaxException {
         if(!current.getCurrentID().equals("NOT SELECTED") && Desktop.isDesktopSupported()){
             Desktop.getDesktop().browse(new URI("https://docs.google.com/spreadsheets/d/" + current.getCurrentID() + "/edit#gid=0"));
+            print("Opened spreadsheet in browser window.");
         } else {
-            info.setText("Select a spreadsheet first.");
+            print("Select a spreadsheet first.");
         }
+    }
+
+    private void print(String s) throws IOException{
+        Options.print(s, info);
     }
 
 

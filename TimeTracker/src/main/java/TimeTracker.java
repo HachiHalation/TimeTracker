@@ -15,30 +15,36 @@ import java.util.stream.Stream;
 
 public class TimeTracker extends Application{
 
-    private final Path MAIN_FOLDER = Paths.get("Data");
-
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
-        makeFiles();
 
         Parent main = FXMLLoader.load(TimeTracker.class.getResource("UI/MainWindow.fxml"));
         primaryStage.setTitle("Time Tracker");
         primaryStage.setScene(new Scene(main, 700, 110));
         primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(event -> {
+            try {
+                Files.deleteIfExists(Options.getLogPath());
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        });
         primaryStage.show();
+        Options.print("TimeTracker V" + Options.getVERSION(), null);
+
+        makeFiles();
     }
 
     public static void main(String[] args){
         launch(args);
     }
 
-    private void makeFiles(){
-        try {
-            Files.createDirectory(MAIN_FOLDER);
-        } catch (IOException e){
-            System.out.println("Data directory exists, skipping init of folder");
+    private void makeFiles() throws IOException{
+        if(!Files.exists(Options.getMainFolder())){
+            Options.print("Data folder not found. Creating.", null);
+            Files.createDirectory(Options.getMainFolder());
         }
     }
+
+
 }

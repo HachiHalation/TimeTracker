@@ -63,12 +63,25 @@ public class CurrentSpreadsheet {
         gd.toFolder(currentID, folderID, gd.getHandler());
     }
 
+    public void setCurrentIDAndInfo(String ssid) throws IOException{
+        setCurrentID(ssid);
+        setSSInfo();
+    }
+
     public void update(String time, String message) throws IOException{
         gs.updateSheet(time, message, currentID, gs.getHandler(), false);
     }
 
     public void note(String message) throws IOException{
         gs.updateSheet("NOTE", message, currentID, gs.getHandler(), true);
+    }
+
+    private void setSSInfo() throws IOException{
+        if(currentID != null){
+            Spreadsheet current = gs.getHandler().spreadsheets().get(currentID).execute();
+            name = current.getProperties().getTitle();
+            folderID = gd.findFolder(gd.getHandler());
+        }
     }
 
     public String getCurrentID() {
@@ -79,7 +92,7 @@ public class CurrentSpreadsheet {
         return folderID;
     }
 
-    public void setCurrentID(String currentID) {
+    public void setCurrentID(String currentID){
         this.currentID = currentID;
     }
 

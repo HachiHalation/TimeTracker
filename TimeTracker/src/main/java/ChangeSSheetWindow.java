@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class ChangeSSheetWindow implements Initializable{
@@ -19,6 +21,8 @@ public class ChangeSSheetWindow implements Initializable{
     private CurrentSpreadsheet currentSpread;
     private ObservableList<String> spreadNames;
     private HashMap<String, String> nameToID;
+
+    private Path OPTION_PATH;
 
     @FXML
     private ChoiceBox list;
@@ -34,6 +38,7 @@ public class ChangeSSheetWindow implements Initializable{
     public ChangeSSheetWindow(CurrentSpreadsheet current) throws IOException{
         this.driveHandler = current.getGoogleDrive().getHandler();
         this.currentSpread = current;
+        OPTION_PATH = Options.getOptionPath();
 
         nameToID = new HashMap<>();
 
@@ -48,6 +53,28 @@ public class ChangeSSheetWindow implements Initializable{
             }
         }
 
+
+    }
+
+    private List<File> getFiles() throws IOException{
+        Drive.Files.List request = driveHandler.files().list().setQ("'" + currentSpread.getFolderID() + "' in parents");
+        return request.execute().getFiles();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        list.setItems(spreadNames);
+        if(currentSpread.getCurrentID() != null) current.setText("Currently Selected: " + currentSpread.getName());
+
+        apply.setOnAction(event -> setCurrentSpread());
+        close.setOnAction(event -> exit());
+        applyandreturn.setOnAction(event -> {
+            try{
+                saveandexit();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        });
 
     }
 
@@ -67,27 +94,19 @@ public class ChangeSSheetWindow implements Initializable{
     }
 
     @FXML
-    private void saveandexit(){
+    private void saveandexit() throws IOException{
         setCurrentSpread();
+        saveSpreadsheet(new Properties());
         exit();
     }
 
-
-    private List<File> getFiles() throws IOException{
-        Drive.Files.List request = driveHandler.files().list().setQ("'" + currentSpread.getFolderID() + "' in parents");
-        return request.execute().getFiles();
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        list.setItems(spreadNames);
-        if(currentSpread.getCurrentID() != null) current.setText("Currently Selected: " + currentSpread.getName());
-
-        apply.setOnAction(event -> setCurrentSpread());
-        close.setOnAction(event -> exit());
-        applyandreturn.setOnAction(event -> saveandexit());
+    private void saveSpreadsheet(Properties options) throws IOException{
+        options.load(Files.newInputStream(OPTION_PATH));
+        options.setProperty("spreadsheetID", currentSpread.getCurrentID());
+        options.store(Files.newOutputStream(OPTION_PATH), "Timetracker Options");
 
     }
+
 
 
 }
