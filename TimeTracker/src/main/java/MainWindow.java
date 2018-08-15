@@ -248,6 +248,17 @@ public class MainWindow {
         }
     }
 
+    @FXML
+    private void openLog() throws IOException{
+        FXMLLoader loader = new FXMLLoader(MainWindow.class.getResource("UI/LogWindow.fxml"));
+        Parent root = loader.load();
+        Stage newStage = new Stage();
+        newStage.setScene(new Scene(root, 200, 300));
+        newStage.setResizable(false);
+        newStage.initModality(Modality.WINDOW_MODAL);
+        newStage.show();
+    }
+
     private void print(String s) throws IOException{
         Options.print(s, info);
     }

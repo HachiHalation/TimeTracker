@@ -4,10 +4,7 @@ import sun.nio.cs.US_ASCII;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +37,8 @@ public class Options {
     }
 
     public static void print(String s, Label input) throws IOException{
-        Files.write(LOG_PATH, s.getBytes());
+        String str = s + "\n";
+        Files.write(LOG_PATH, str.getBytes(), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         if(input != null) input.setText(s);
     }
 

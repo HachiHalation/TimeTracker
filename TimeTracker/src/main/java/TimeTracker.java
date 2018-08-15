@@ -17,6 +17,8 @@ public class TimeTracker extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        makeFiles();
+        Options.print("TimeTracker V" + Options.getVERSION(), null);
 
         Parent main = FXMLLoader.load(TimeTracker.class.getResource("UI/MainWindow.fxml"));
         primaryStage.setTitle("Time Tracker");
@@ -30,9 +32,7 @@ public class TimeTracker extends Application{
             }
         });
         primaryStage.show();
-        Options.print("TimeTracker V" + Options.getVERSION(), null);
 
-        makeFiles();
     }
 
     public static void main(String[] args){
@@ -41,8 +41,8 @@ public class TimeTracker extends Application{
 
     private void makeFiles() throws IOException{
         if(!Files.exists(Options.getMainFolder())){
-            Options.print("Data folder not found. Creating.", null);
             Files.createDirectory(Options.getMainFolder());
+            Options.print("Data folder not found. Creating.", null);
         }
     }
 

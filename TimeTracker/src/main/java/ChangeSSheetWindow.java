@@ -96,6 +96,7 @@ public class ChangeSSheetWindow implements Initializable{
     @FXML
     private void saveandexit() throws IOException{
         setCurrentSpread();
+        Options.print("Spreadsheet changed to + \"" + currentSpread.getName() + "\".", null);
         saveSpreadsheet(new Properties());
         exit();
     }

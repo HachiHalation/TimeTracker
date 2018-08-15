@@ -58,7 +58,7 @@ public class CurrentSpreadsheet {
         Spreadsheet spread = gs.makeNewSpread(title, gs.getHandler(), updateColor, noteColor);
         currentID = spread.getSpreadsheetId();
         name = spread.getProperties().getTitle();
-
+        Options.print("New spreadsheet \"" + name + "\" created.", null);
 
         gd.toFolder(currentID, folderID, gd.getHandler());
     }
@@ -66,6 +66,7 @@ public class CurrentSpreadsheet {
     public void setCurrentIDAndInfo(String ssid) throws IOException{
         setCurrentID(ssid);
         setSSInfo();
+        Options.print("Set info under spreadsheet ID" + ssid + ".", null);
     }
 
     public void update(String time, String message) throws IOException{
