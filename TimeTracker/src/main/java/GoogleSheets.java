@@ -21,38 +21,16 @@ import java.time.Instant;
 
 public class GoogleSheets {
 
-    private String APP_NAME;
-
-    private String CREDENTIAL_FOLDER;
-    private String CLIENT_SCERET;
-    private JsonFactory FACTORY;
-    private List<String> scopes;
-
     private Sheets handler;
 
-    public GoogleSheets(HttpTransport transport) throws IOException{
-        APP_NAME = "Time Tracker";
-        CREDENTIAL_FOLDER = "Data/credentialsSheets";
-        CLIENT_SCERET = "credentials_drive.json";
-        FACTORY = JacksonFactory.getDefaultInstance();
-        scopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
-
-        handler = makeServiceHandler(transport);
+    public GoogleSheets(HttpTransport transport, Credential credential) throws IOException{
+        handler = makeServiceHandler(transport, credential);
     }
 
 
-    private Sheets makeServiceHandler(HttpTransport transport) throws IOException{
-        InputStream in = GoogleSheets.class.getResourceAsStream(CLIENT_SCERET);
-        GoogleClientSecrets secret = GoogleClientSecrets.load(FACTORY, new InputStreamReader(in));
-
-        GoogleAuthorizationCodeFlow.Builder flowbuild = new GoogleAuthorizationCodeFlow.Builder(transport, FACTORY, secret, scopes);
-        flowbuild.setDataStoreFactory(new FileDataStoreFactory(new java.io.File(CREDENTIAL_FOLDER)));
-        flowbuild.setAccessType("offline");
-        GoogleAuthorizationCodeFlow flow = flowbuild.build();
-
-        Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-        Sheets.Builder serviceBuild = new Sheets.Builder(transport, FACTORY, credential);
-        serviceBuild.setApplicationName(APP_NAME);
+    private Sheets makeServiceHandler(HttpTransport transport, Credential credential) throws IOException{
+        Sheets.Builder serviceBuild = new Sheets.Builder(transport, Options.getFACTORY(), credential);
+        serviceBuild.setApplicationName(Options.getAppName());
         return serviceBuild.build();
     }
 

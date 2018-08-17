@@ -1,9 +1,13 @@
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Color;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class CurrentSpreadsheet {
 
@@ -16,10 +20,11 @@ public class CurrentSpreadsheet {
     private Color updateColor;
     private Color noteColor;
 
-    public CurrentSpreadsheet() throws IOException{
-        HttpTransport transport = new NetHttpTransport();
-        gs = new GoogleSheets(transport);
-        gd = new GoogleDrive(transport);
+    public CurrentSpreadsheet() throws IOException, GeneralSecurityException{
+        HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
+        Credential credential = Options.verifyCredentials(transport);
+        gs = new GoogleSheets(transport, credential);
+        gd = new GoogleDrive(transport, credential);
 
 
         folderID = gd.findFolder(gd.getHandler());
@@ -46,13 +51,6 @@ public class CurrentSpreadsheet {
         noteColor.setBlue(defblue);
     }
 
-    public CurrentSpreadsheet(String currentID, String name, String folderID, GoogleDrive gd, GoogleSheets gs) {
-        this.currentID = currentID;
-        this.folderID = folderID;
-        this.name = name;
-        this.gd = gd;
-        this.gs = gs;
-    }
 
     public void makeAndSetNew(String title) throws IOException{
         Spreadsheet spread = gs.makeNewSpread(title, gs.getHandler(), updateColor, noteColor);
@@ -79,7 +77,8 @@ public class CurrentSpreadsheet {
 
     private void setSSInfo() throws IOException{
         if(currentID != null){
-            Spreadsheet current = gs.getHandler().spreadsheets().get(currentID).execute();
+            Sheets.Spreadsheets.Get test = gs.getHandler().spreadsheets().get(currentID);
+            Spreadsheet current = test.execute();
             name = current.getProperties().getTitle();
             folderID = gd.findFolder(gd.getHandler());
         }

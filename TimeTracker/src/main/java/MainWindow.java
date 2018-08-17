@@ -17,6 +17,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.Properties;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class MainWindow {
     private Label title;
 
     @FXML
-    private void initialize() throws IOException{
+    private void initialize() throws IOException, GeneralSecurityException{
         title.setText("TimeTracker V" + Options.getVERSION());
 
         loadOptions();
@@ -72,7 +73,7 @@ public class MainWindow {
         });
     }
 
-    public void loadOptions() throws IOException{
+    public void loadOptions() throws IOException, GeneralSecurityException{
         Properties options = new Properties();
 
         if(!Files.exists(Options.getOptionPath())){

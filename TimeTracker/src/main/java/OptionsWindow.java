@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -88,7 +89,7 @@ public class OptionsWindow implements Initializable{
         apply.setOnAction(event -> {
             try{
                 applyChanges();
-            } catch (IOException e) {
+            } catch (IOException | GeneralSecurityException e) {
                 e.printStackTrace();
             }
         });
@@ -96,7 +97,7 @@ public class OptionsWindow implements Initializable{
         ok.setOnAction(event -> {
             try {
                 saveAndClose();
-            } catch (IOException e){
+            } catch (IOException | GeneralSecurityException e){
                 e.printStackTrace();
             }
         });
@@ -135,13 +136,13 @@ public class OptionsWindow implements Initializable{
     }
 
     @FXML
-    private void applyChanges() throws IOException{
+    private void applyChanges() throws IOException, GeneralSecurityException{
         options.store(Files.newOutputStream(path), "Timetracker Options");
         controller.loadOptions();
     }
 
     @FXML
-    private void saveAndClose() throws IOException{
+    private void saveAndClose() throws IOException, GeneralSecurityException{
         applyChanges();
         closeWindow();
     }

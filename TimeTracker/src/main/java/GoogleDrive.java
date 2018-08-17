@@ -20,38 +20,20 @@ import java.util.Collections;
 import java.util.List;
 
 public class GoogleDrive {
-    private String APP_NAME;
-
-    private String CREDENTIAL_FOLDER;
-    private String CLIENT_SCERET;
-    private JsonFactory FACTORY;
-    private List<String> scopes;
 
     private Drive handler;
 
-    public GoogleDrive(HttpTransport transport) throws IOException{
-        APP_NAME = "Time Tracker";
-        CREDENTIAL_FOLDER = "Data/credentialsDrive";
-        CLIENT_SCERET = "credentials_drive.json";
-        FACTORY = JacksonFactory.getDefaultInstance();
-        scopes = Collections.singletonList(DriveScopes.DRIVE);
+    public GoogleDrive(HttpTransport transport, Credential credential) throws IOException{
 
-        handler = makeServiceHandler(transport);
+        handler = makeServiceHandler(transport, credential);
+
     }
 
 
-    private Drive makeServiceHandler(HttpTransport transport) throws IOException {
-        InputStream in = GoogleSheets.class.getResourceAsStream(CLIENT_SCERET);
-        GoogleClientSecrets secret = GoogleClientSecrets.load(FACTORY, new InputStreamReader(in));
+    private Drive makeServiceHandler(HttpTransport transport, Credential credential) throws IOException {
 
-        GoogleAuthorizationCodeFlow.Builder flowbuild = new GoogleAuthorizationCodeFlow.Builder(transport, FACTORY, secret, scopes);
-        flowbuild.setDataStoreFactory(new FileDataStoreFactory(new java.io.File(CREDENTIAL_FOLDER)));
-        flowbuild.setAccessType("offline");
-        GoogleAuthorizationCodeFlow flow = flowbuild.build();
-
-        Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-        Drive.Builder serviceBuild = new Drive.Builder(transport, FACTORY, credential);
-        serviceBuild.setApplicationName(APP_NAME);
+        Drive.Builder serviceBuild = new Drive.Builder(transport, Options.getFACTORY(), credential);
+        serviceBuild.setApplicationName(Options.getAppName());
         return serviceBuild.build();
     }
 
